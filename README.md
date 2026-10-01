@@ -5,7 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-RDS-4169E1?logo=postgresql&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt-postgres-FF694B?logo=dbt&logoColor=white)
 ![Terraform](https://img.shields.io/badge/Terraform-IaC-7B42BC?logo=terraform&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-28%20passing-2ea44f?logo=pytest&logoColor=white)
+[![Tests](https://github.com/RicardoEdreiraPenas/centro-logistico/actions/workflows/tests.yml/badge.svg)](https://github.com/RicardoEdreiraPenas/centro-logistico/actions/workflows/tests.yml)
 
 Simulación de un centro logístico real: camiones que llegan con tractora y remolque, pedidos de clientes con palets y peso, asignación a 10 muelles de carga y descarga, y seguimiento de la operación en tiempo real. Los eventos viajan por **Amazon SQS**, se guardan en **PostgreSQL (RDS)**, se transforman con **dbt** y se visualizan en **Metabase**. Toda la infraestructura se levanta con **Terraform**.
 
