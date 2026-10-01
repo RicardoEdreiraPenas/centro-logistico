@@ -1,0 +1,9 @@
+version: 2
+sources:
+  - name: logistics
+    schema: logistics
+    tables:
+      - name: trucks
+      - name: docks
+      - name: assignments
+      - name: truck_orders

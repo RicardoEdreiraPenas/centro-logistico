@@ -1,0 +1,6 @@
+version: 2
+sources:
+  - name: dock_events
+    schema: dock_events
+    tables:
+      - name: raw_events_dock

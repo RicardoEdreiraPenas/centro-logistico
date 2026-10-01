@@ -1,0 +1,23 @@
+name: 'edem_project'
+version: '1.0.0'
+profile: 'edem_project'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  edem_project:
+    logistics:
+      mart:
+        +schema: logistics_mart
+    dock_events:
+      mart:
+        +schema: dock_events_mart

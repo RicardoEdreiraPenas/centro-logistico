@@ -1,0 +1,7 @@
+# Copia este archivo como terraform.tfvars y rellena tus valores.
+# terraform.tfvars está en .gitignore: nunca se sube al repositorio.
+
+vpc_id       = "vpc-xxxxxxxx"
+subnet_id    = "subnet-xxxxxxxx"
+rds_host     = "<tu-instancia>.<region>.rds.amazonaws.com"
+rds_password = "<tu-contraseña>"
