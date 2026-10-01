@@ -1,0 +1,23 @@
+# Entornos y secretos
+.env
+.venv/
+venv/
+*.pem
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfplan
+crash.log
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# dbt
+analytical_layer/dbt_template/edem_project/target/
+analytical_layer/dbt_template/edem_project/dbt_packages/
+analytical_layer/dbt_template/edem_project/logs/
