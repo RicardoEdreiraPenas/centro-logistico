@@ -10,6 +10,10 @@ locals {
     sqs_region   = var.sqs_region
   }
 
+  # IP pública necesaria: las instancias se lanzan en una subred pública y salen
+  # a Internet por el Internet Gateway, sin NAT Gateway (que tiene coste fijo).
+  # Además, client_app y Metabase se consultan directamente. El acceso entrante
+  # lo limita el security group.
   common = {
     ami                         = data.aws_ami.al2023.id
     subnet_id                   = var.subnet_id
@@ -21,6 +25,8 @@ locals {
 }
 
 resource "aws_instance" "truck_app" {
+  #checkov:skip=CKV_AWS_88:IP pública necesaria (subred pública sin NAT); el acceso lo limita el security group
+  #checkov:skip=CKV_AWS_126:La monitorización detallada tiene coste y no aporta en una demo
   ami                         = local.common.ami
   instance_type               = "t3.micro"
   subnet_id                   = local.common.subnet_id
@@ -30,10 +36,24 @@ resource "aws_instance" "truck_app" {
   associate_public_ip_address = local.common.associate_public_ip_address
   user_data                   = templatefile("${path.module}/user_data/truck_app.sh", local.app_env)
 
+  ebs_optimized = true
+
+  # IMDSv2 obligatorio: evita que una petición SSRF lea las credenciales del rol
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   tags = { Name = "truck-app" }
 }
 
 resource "aws_instance" "dock_app" {
+  #checkov:skip=CKV_AWS_88:IP pública necesaria (subred pública sin NAT); el acceso lo limita el security group
+  #checkov:skip=CKV_AWS_126:La monitorización detallada tiene coste y no aporta en una demo
   ami                         = local.common.ami
   instance_type               = "t3.micro"
   subnet_id                   = local.common.subnet_id
@@ -43,10 +63,24 @@ resource "aws_instance" "dock_app" {
   associate_public_ip_address = local.common.associate_public_ip_address
   user_data                   = templatefile("${path.module}/user_data/dock_app.sh", local.app_env)
 
+  ebs_optimized = true
+
+  # IMDSv2 obligatorio: evita que una petición SSRF lea las credenciales del rol
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   tags = { Name = "dock-app" }
 }
 
 resource "aws_instance" "client_app" {
+  #checkov:skip=CKV_AWS_88:IP pública necesaria (subred pública sin NAT); el acceso lo limita el security group
+  #checkov:skip=CKV_AWS_126:La monitorización detallada tiene coste y no aporta en una demo
   ami                         = local.common.ami
   instance_type               = "t3.micro"
   subnet_id                   = local.common.subnet_id
@@ -56,10 +90,24 @@ resource "aws_instance" "client_app" {
   associate_public_ip_address = local.common.associate_public_ip_address
   user_data                   = templatefile("${path.module}/user_data/client_app.sh", local.app_env)
 
+  ebs_optimized = true
+
+  # IMDSv2 obligatorio: evita que una petición SSRF lea las credenciales del rol
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   tags = { Name = "client-app" }
 }
 
 resource "aws_instance" "el_logistics" {
+  #checkov:skip=CKV_AWS_88:IP pública necesaria (subred pública sin NAT); el acceso lo limita el security group
+  #checkov:skip=CKV_AWS_126:La monitorización detallada tiene coste y no aporta en una demo
   ami                         = local.common.ami
   instance_type               = "t3.micro"
   subnet_id                   = local.common.subnet_id
@@ -69,10 +117,24 @@ resource "aws_instance" "el_logistics" {
   associate_public_ip_address = local.common.associate_public_ip_address
   user_data                   = templatefile("${path.module}/user_data/el_logistics.sh", local.app_env)
 
+  ebs_optimized = true
+
+  # IMDSv2 obligatorio: evita que una petición SSRF lea las credenciales del rol
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   tags = { Name = "el-logistics" }
 }
 
 resource "aws_instance" "metabase" {
+  #checkov:skip=CKV_AWS_88:IP pública necesaria (subred pública sin NAT); el acceso lo limita el security group
+  #checkov:skip=CKV_AWS_126:La monitorización detallada tiene coste y no aporta en una demo
   ami                         = local.common.ami
   instance_type               = "t3.small"
   subnet_id                   = local.common.subnet_id
@@ -82,9 +144,18 @@ resource "aws_instance" "metabase" {
   associate_public_ip_address = local.common.associate_public_ip_address
   user_data                   = file("${path.module}/user_data/metabase.sh")
 
+  ebs_optimized = true
+
+  # IMDSv2 obligatorio: evita que una petición SSRF lea las credenciales del rol
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
   root_block_device {
     volume_size = 20
     volume_type = "gp3"
+    encrypted   = true
   }
 
   tags = { Name = "metabase" }
