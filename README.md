@@ -88,13 +88,22 @@ pytest -q        # 28 tests de truck_app, dock_app y client_app
 
 ```bash
 cd terraform
-cp terraform.tfvars.example terraform.tfvars   # VPC, subred y datos de RDS
+cp terraform.tfvars.example terraform.tfvars   # VPC, subred, datos de RDS y tu IP
 terraform init
 terraform plan
 terraform apply
 ```
 
 Terraform crea una instancia EC2 por servicio y le inyecta la configuración al arrancar. Las instancias acceden a SQS mediante un **rol de IAM**, sin claves de AWS en ningún fichero.
+
+#### Seguridad
+
+| Variable | Obligatoria | Uso |
+| --- | --- | --- |
+| `allowed_ssh_cidr` | Sí | CIDR desde el que se permite SSH, normalmente tu IP con `/32`. No acepta `0.0.0.0/0` |
+| `app_ingress_cidrs` | No (por defecto `[]`) | Rangos que pueden abrir la API (8080) y Metabase (3000). Vacío deja esos puertos cerrados |
+
+Además, las instancias exigen IMDSv2 y llevan el volumen raíz cifrado. Las excepciones que marca checkov (IP pública, monitorización detallada y salida a Internet) están justificadas en el propio código. Dependabot revisa cada semana las dependencias de Python, Terraform y GitHub Actions.
 
 ### 4. Capa analítica
 

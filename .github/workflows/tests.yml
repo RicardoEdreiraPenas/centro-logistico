@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+# Los tests solo necesitan leer el código.
+permissions:
+  contents: read
+
 jobs:
   pytest:
     runs-on: ubuntu-latest

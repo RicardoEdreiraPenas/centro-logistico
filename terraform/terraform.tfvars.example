@@ -5,3 +5,11 @@ vpc_id       = "vpc-xxxxxxxx"
 subnet_id    = "subnet-xxxxxxxx"
 rds_host     = "<tu-instancia>.<region>.rds.amazonaws.com"
 rds_password = "<tu-contraseña>"
+
+# Acceso. Consulta tu IP pública (por ejemplo con `curl -s https://checkip.amazonaws.com`)
+# y añade /32. SSH es obligatorio y no admite 0.0.0.0/0.
+allowed_ssh_cidr = "<tu-ip>/32"
+
+# Quién puede abrir la API de pedidos (8080) y Metabase (3000).
+# Si se deja vacío, esos puertos quedan cerrados.
+app_ingress_cidrs = ["<tu-ip>/32"]

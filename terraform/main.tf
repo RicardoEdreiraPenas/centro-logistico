@@ -71,36 +71,50 @@ resource "aws_iam_instance_profile" "logistics_ec2" {
 }
 
 # Security group — SSH + client API + Metabase
+# SSH solo desde allowed_ssh_cidr. La API y Metabase solo se abren a los rangos
+# de app_ingress_cidrs (vacío por defecto, es decir, cerrados).
 resource "aws_security_group" "logistics_ec2" {
   name        = "logistics-ec2-sg"
   description = "Logistics center EC2 instances"
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "SSH"
+    description = "SSH desde la IP de administracion"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allowed_ssh_cidr]
   }
 
-  ingress {
-    description = "Client API + floor plan"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = length(var.app_ingress_cidrs) > 0 ? [1] : []
+    content {
+      description = "Client API + floor plan"
+      from_port   = 8080
+      to_port     = 8080
+      protocol    = "tcp"
+      cidr_blocks = var.app_ingress_cidrs
+    }
   }
 
-  ingress {
-    description = "Metabase"
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = length(var.app_ingress_cidrs) > 0 ? [1] : []
+    content {
+      description = "Metabase"
+      from_port   = 3000
+      to_port     = 3000
+      protocol    = "tcp"
+      cidr_blocks = var.app_ingress_cidrs
+    }
   }
 
+  # Salida abierta: al arrancar, las instancias descargan paquetes (dnf), el
+  # repositorio (GitHub), dependencias (PyPI) y la imagen de Metabase, y usan
+  # SQS y RDS por sus endpoints públicos. Cerrarla bien exige endpoints de VPC
+  # o un proxy de salida, que quedan fuera del alcance de esta demo.
+  #checkov:skip=CKV_AWS_382:Salida necesaria para el arranque y para SQS/RDS; ver comentario
   egress {
+    description = "Salida a Internet para paquetes, SQS y RDS"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
