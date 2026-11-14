@@ -1,5 +1,5 @@
 psycopg2-binary==2.9.13
-boto3==1.43.122
+boto3==1.44.0
 pytest==9.2.0
 fastapi==0.162.0
 starlette==1.10.0
